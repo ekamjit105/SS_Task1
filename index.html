@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Product Display</title>
+</head>
+<body>
+<center>
+<h1>Product List</h1>
+
+    <table border="1">
+    <thead>
+        <tr>
+            <th>Title</th>
+            <th>Price</th>
+            <th>Popularity</th>
+        </tr>
+    </thead>
+    <tbody id="productTableBody"></tbody>
+</table>
+</center>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        // Fetch JSON data from the API
+        fetch('https://s3.amazonaws.com/open-to-cors/assignment.json')
+            .then(response => response.json())
+            .then(data => {
+                // Extract products from the data object
+                const products = data.products;
+
+                // Convert products object into an array
+                const productArray = Object.keys(products).map(key => ({
+                    id: key,
+                    ...products[key]
+                }));
+
+                // Sort products based on descending popularity
+                productArray.sort((a, b) => b.popularity - a.popularity);
+
+                // Display data in the table
+                const tableBody = document.getElementById('productTableBody');
+                productArray.forEach(product => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${product.title}</td>
+                        <td>${product.price}</td>
+                        <td>${product.popularity}</td>
+                    `;
+                    tableBody.appendChild(row);
+                });
+            })
+            .catch(error => console.error('Error fetching data:', error));
+    });
+</script>
+
+</body>
+</html>
